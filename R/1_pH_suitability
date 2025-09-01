@@ -1,0 +1,178 @@
+library(sf)          ## gis package for vectors
+library(dplyr)       ## package for 'piping'
+library(ggplot2)     ## package voor plots
+library(ggspatial)   ## package for gis plots
+library(stars)       ## gis package for rasters
+library(readxl)      ## to read excel files
+library(odbc)        ## ro read access files
+library(DBI)         ## to read access files
+
+### Niels van Hof, nielsvanhof@proton.me
+### Internship Project "Habitat types outside of Natura 2000"
+### Provincie Zeeland, Radboud University
+### Script 1: pH suitability
+
+### Calculating suitability for each habitat type in terms of pH
+### Based on abiotic requirements from N2000 profile documents,
+### and pH map from Helfenstein et al., 2024
+
+
+## load in pH map cropped to Zeeland
+pH <- stars::read_stars('sources/pH/pH_KCl_d_0_5_QRF_pred_mean_cropped.tif')
+
+plot(pH)
+
+## import pH ranges for each habitat type, through an Access connection
+accessconn <- dbConnect(odbc::odbc(), .connection_string = "Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=sources/VereistenHabitattypenDec2008.mdb;")
+pH_habtypes <- dbReadTable(accessconn, "ZuurgraadHabtype_Juni2008")
+dbDisconnect(accessconn)
+## Remove columns with "opmerkingen" and "bespreekgeval"
+pH_habtypes <- pH_habtypes[,-c(11,12)]
+## Remove rows that have no requirements for pH (marine habitat types)
+pH_habtypes <- pH_habtypes %>%
+  filter(!if_all(-HabitatCode, ~ is.na(.) | . == ""))
+# Remove X in front of column names
+colnames(pH_habtypes) <- gsub("^X", "", colnames(pH_habtypes))
+
+## import pH ranges for the classes, sourced from Runhaar et al., 2009
+pH_ranges <- read_excel("sources/pH/pH_ranges.xlsx") 
+
+## function to link pH categories to pH values
+get_limits <- function(habitat_code) {
+  ## filter data on selected habitat type
+  habitat_row <- pH_habtypes[pH_habtypes$HabitatCode == habitat_code, ]
+  
+  ## stop if habitat type is not found
+  if (nrow(habitat_row) == 0) {
+    stop("Habitat type not found")
+  }
+  
+  ## all categories that have K (or a variation of K). This is the core range.
+  relevant_categories_K <- colnames(pH_habtypes)[-1][!is.na(habitat_row[1, -1]) & habitat_row[1, -1] %in% c("K", "Ka", "Kb")]
+  
+  ## designate upper and lower limits
+  lower_limit_K <- Inf
+  upper_limit_K <- -Inf
+  
+  ## loop through categories and find the accompanying pH ranges
+  for (category in relevant_categories_K) {
+    pH_range <- pH_ranges[pH_ranges$Klasse == category, ]
+    
+    ## stop if the categorie does not exist in the pH ranges file
+    if (nrow(pH_range) == 0) {
+      stop(paste("No pH range defined for category:", category))
+    }
+    
+    ## update upper and lower limits
+    lower_limit_K <- min(lower_limit_K, pH_range$Ondergrens, na.rm = TRUE)
+    upper_limit_K <- max(upper_limit_K, pH_range$Bovengrens, na.rm = TRUE)
+  }
+  
+  ## all categories that have A (or a variation of A). This is the supplementary range.
+  relevant_categories_A <- colnames(pH_habtypes)[-1][!is.na(habitat_row[1, -1]) & habitat_row[1, -1] %in% c("A", "Aa", "Ab")]
+  
+  ## designate upper and lower limits
+  lower_limit_A <- Inf
+  upper_limit_A <- -Inf
+  
+  ## loop through categories and find the accompanying pH ranges
+  for (category in relevant_categories_A) {
+    pH_range <- pH_ranges[pH_ranges$Klasse == category, ]
+    
+    ## stop if the categorie does not exist in the pH ranges file
+    if (nrow(pH_range) == 0) {
+      stop(paste("No pH range defined for category:", category))
+    }
+    
+    ## update upper and lower limits
+    lower_limit_A <- min(lower_limit_A, pH_range$Ondergrens, na.rm = TRUE)
+    upper_limit_A <- max(upper_limit_A, pH_range$Bovengrens, na.rm = TRUE)
+  }
+  
+  return(list(lowerA = lower_limit_A, upperA = upper_limit_A, lowerK = lower_limit_K, upperK = upper_limit_K))
+}
+
+## List all habitat types
+habitat_codes <- unique(pH_habtypes$HabitatCode)
+
+## Make a dataframe to store all pH ranges
+limits_df <- data.frame(habitat_code = character(),
+                        lowerA = numeric(),
+                        lowerK = numeric(),
+                        upperK = numeric(),
+                        upperA = numeric(),
+                        stringsAsFactors = FALSE)
+
+
+## loop through all habitat types and put the reference values in the dataframe
+for (habitat_code in habitat_codes) {
+  ## get limits for K and A
+  getlimits <- get_limits(habitat_code)
+  
+  ## combine the limits in the df
+  limits <- data.frame(lowerA = getlimits$lowerA,
+                       lowerK = getlimits$lowerK,
+                       upperK = getlimits$upperK,
+                       upperA = getlimits$upperA)
+  
+  ## correct limits if necessary (when K is the same as A, the following calculations will not work so add slight difference)
+  if (limits$upperA <= limits$upperK) {
+    limits$upperA <- limits$upperK + 0.0001
+  }
+  if (limits$lowerA >= limits$lowerK) {
+    limits$lowerA <- limits$lowerK - 0.0001
+  }
+  
+  ## add habitatcode to limits
+  limits$habitat_code <- habitat_code
+  
+  ## add limits to dataframe
+  limits_df <- rbind(limits_df, limits)
+}
+
+## reference values dataframe for each habitat type
+referentie_waarden <- limits_df %>%
+  mutate(
+    habitattype = habitat_code,
+    lower0 = lowerA - (upperA - lowerA) * 0.1 , ## lower0 is 10% lower than the whole range
+    upper0 = upperA + (upperA - lowerA) * 0.1, ## upper0 is 10% higher than the whole range
+    predictor   = "pH"
+  ) %>%
+  dplyr::select(habitattype, predictor, lower0, lowerA, lowerK, upperK, upperA, upper0)
+
+## Make a suitability map by looping through all habitat types
+teller <- 0
+tot_aantal_kaarten <- length(unique(referentie_waarden$habitattype))
+
+for (i in unique(referentie_waarden$habitattype)) {
+  
+  ## make a function to translate a given pH to a value between 0 and 1, based on reference
+  suitability_functie_pH <-
+  approxfun(x = referentie_waarden %>% filter(habitattype ==  i, predictor == 'pH') %>%
+              dplyr::select(lower0,
+                            lowerA,
+                            lowerK,
+                            upperK,
+                            upperA,
+                            upper0) %>% unlist, 
+            y = c(0, .5, 1, 1, .5, 0),    ## suitability score for each range (A, K and 0)
+            yleft = 0,    ## which values left of this range?
+            yright = 0)     ## which values right of this range?
+  
+  ## add suitability values to the map
+  pH_suitability_kaart <- 
+    st_apply(pH, c('x','y'), suitability_functie_pH)
+  
+  ## change raster to vector
+  pH_suitability_kaart_polygon <- st_as_sf(pH_suitability_kaart)
+  
+  ## write to geopackage (vector)
+  st_write(dsn = paste0("outputs/outputmaps_pH/suitability_pH_", i, ".gpkg"),
+           obj = pH_suitability_kaart_polygon)
+  
+  ## increase count by one
+  teller <- teller + 1
+  
+  ## give a notification when a map is finished
+  print(paste0("suitability_pH_ ", i, ".gpkg created successfully (", teller, "/", tot_aantal_kaarten, ")."))
+}
