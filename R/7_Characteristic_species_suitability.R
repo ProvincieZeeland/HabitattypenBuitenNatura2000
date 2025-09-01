@@ -54,7 +54,7 @@ plot(ZLD_grid250)
 #st_write(dsn = "C:/Users/nhof0/OneDrive - Provincie Zeeland/Habitattypen-buiten_N2K_Niels/R/outputs/NDFFtest.gpkg", obj = NDFF)
 
 ## load in the already fixed data
-NDFF <- st_read("C:/Users/nhof0/OneDrive - Provincie Zeeland/Habitattypen-buiten_N2K_Niels/R/NDFF_geometries_fix/NDFF_NBP25/ndff_zl_nbp_v2_fixed.gpkg")
+NDFF <- st_read("Habitattypen-buiten_N2K_Niels/R/NDFF_geometries_fix/NDFF_NBP25/ndff_zl_nbp_v2_fixed.gpkg")
 NDFF <- st_read("sources/species/ndff_zl_nbp_v2_fixed.gpkg") ## move the file to this location!
 
 ## make points of the polygons. The middlepoint is taken for the cirular polygons
@@ -146,3 +146,4 @@ for (habitat_code in habitat_codes) {
   st_write(dsn = paste0("outputs/outputmaps_species/suitability_species_",
                         habitat_code, ".gpkg"), obj = suitability_soorten, layer = "suitability_species", driver = "GPKG", append = F)
 }
+
