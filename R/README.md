@@ -22,6 +22,7 @@ De voorspelling van habitattypen is gebaseerd op 4 variabelen:
 Eerst wordt per variabele de kans op voorkomen van elk habitattype benaderd aan de hand van de bekende eisen voor ieder habitattype. Vervolgens worden deze "suitability scores" samen met de bekende habitattypeverspreiding gebruikt om een Random Forest model te trainen dat de kans op voorkomen van ieder habitattype voorspelt. Het resultaat is een geopackage met hokjes op 250m resolutie voor ieder habitattype, met een kans op voorkomen van het betreffende habitattype tussen de 0 en 1 (0 = kleinste kans op voorkomen, 1 = grootste kans op voorkomen).
 
 *Gebruik van de scripts*
+
 De scripts zijn gesorteerd op volgorde van hoe ze gerund moeten worden. Om de scripts te runnen is een recente versie van R en RStudio (script 1, 2, 3, 5, 6, 7, 8, 9 en 10) en Python (script 4) vereist. Aan het begin van elk script staan de benodigde R packages, die geïnstalleerd dienen te worden alvorens het script gerund kan worden. Ook staat aan het begin van elk script kort beschreven wat het doet. Voor intern gebruik in de Provincie Zeeland zijn alle bronnen te vinden in het mapje "sources", en zijn alle scripts direct te runnen omdat de bronnen meteen kunnen worden ingeladen. Voor extern gebruik moeten eerst de bijbehorende bronnen verzameld worden, alvorens de scripts gerund kunnen worden. Dit omdat sommige bronnen beschermd eigendom van de Provincie Zeeland zijn. De meeste bronnen zijn echter wel online te vinden.
 
 *Korte beschrijving van de scripts*
@@ -77,5 +78,6 @@ Helfenstein, A., Mulder, V. L., Hack-ten Broeke, M. J. D., van Doorn, M., Teulin
 Nijssen, M. E., van Riel, M., van Grunsven, R., Wallis de Vries, M., Kleukers, R., Creemers, R., & Bijlsma, R. J. (in press). Karakteristieke soorten kleine fauna voor de beoordeling van structuur & functie van habitattypen Natura 2000 (WOT-technical report 271). Wettelijke onderzoekstaken Natuur & Milieu.
 
 Runhaar, J., Jalink, M. H., Hunneman, H., Witte, J. P. M., & Hennekens, S. M. (2009). Ecologische vereisten habitattypen (A307144; p. 93). KWR Watercycle Research Institute. https://edepot.wur.nl/4986
+
 
 
