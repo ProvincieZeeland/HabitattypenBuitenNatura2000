@@ -9,9 +9,11 @@ Niels van Hof
 Voor meer informatie over de achtergrond, methoden, resultaten en discussie van dit project raad ik aan om mijn verslag te lezen. Bij vragen kun je terecht bij Pieter Lievense: pcj.lievense@zeeland.nl of Marion Pross: m.pross@zeeland.nl.
 
 *Over het project*
+
 Dit project komt voort uit de Natuurherstelverordening, die stelt dat habitattypen die in slechte staat zijn hersteld moet worden. In Zeeland en veel andere provincies bestaan er weinig habitattypekaarten buiten Natura 2000, die wel nodig zijn om de doelen in de Natuurherstelverordening te behalen. Om het karteren van habitattypen in de natuurgebieden buiten Natura 2000 gebieden zo efficiënt mogelijk te maken, was het doel van dit project om de kans op voorkomen van ieder terrestrisch habitattype in de Provincie Zeeland te voorspellen. Dit project kan gezien worden als een pionieronderzoek, om te laten zien wat er mogelijk is in het voorspellen van habitattypen door middel van bestaande data. De resultaten zijn heel veelbelovend, de gemiddelde nauwkeurigheid van de modellen is 85%. Deze methode kan, met wat aanpassingen, ook door andere provincies gebruikt worden om het voorkomen van habitattypen te voorspellen en zo op een efficiëntere manier te voldoen aan de Natuurherstelverordening.
 
 *Globale methode*
+
 De voorspelling van habitattypen is gebaseerd op 4 variabelen:
 - pH (zuurtegraad in de grond)
 - Grondwaterdiepte (GVG)
@@ -75,4 +77,5 @@ Helfenstein, A., Mulder, V. L., Hack-ten Broeke, M. J. D., van Doorn, M., Teulin
 Nijssen, M. E., van Riel, M., van Grunsven, R., Wallis de Vries, M., Kleukers, R., Creemers, R., & Bijlsma, R. J. (in press). Karakteristieke soorten kleine fauna voor de beoordeling van structuur & functie van habitattypen Natura 2000 (WOT-technical report 271). Wettelijke onderzoekstaken Natuur & Milieu.
 
 Runhaar, J., Jalink, M. H., Hunneman, H., Witte, J. P. M., & Hennekens, S. M. (2009). Ecologische vereisten habitattypen (A307144; p. 93). KWR Watercycle Research Institute. https://edepot.wur.nl/4986
+
 
