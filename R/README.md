@@ -6,7 +6,7 @@ Niels van Hof
 
 (Zet voor de leesbaarheid van dit bestand "Automatische terugloop" aan, bovenaan in de balk onder "Opmaak")
 
-Voor meer informatie over de achtergrond, methoden, resultaten en discussie van dit project raad ik aan om mijn verslag te lezen. Bij vragen kun je terecht bij Pieter Lievense: pcj.lievense@zeeland.nl of Marion Pross: m.pross@zeeland.nl.
+Voor meer informatie over de achtergrond, methoden, resultaten en discussie van dit project raad ik aan om mijn verslag te lezen. Bij vragen kun je terecht bij Team Natuurmonitoring: natuurmonitoring@zeeland.nl.
 
 *Over het project*
 
@@ -78,6 +78,7 @@ Helfenstein, A., Mulder, V. L., Hack-ten Broeke, M. J. D., van Doorn, M., Teulin
 Nijssen, M. E., van Riel, M., van Grunsven, R., Wallis de Vries, M., Kleukers, R., Creemers, R., & Bijlsma, R. J. (in press). Karakteristieke soorten kleine fauna voor de beoordeling van structuur & functie van habitattypen Natura 2000 (WOT-technical report 271). Wettelijke onderzoekstaken Natuur & Milieu.
 
 Runhaar, J., Jalink, M. H., Hunneman, H., Witte, J. P. M., & Hennekens, S. M. (2009). Ecologische vereisten habitattypen (A307144; p. 93). KWR Watercycle Research Institute. https://edepot.wur.nl/4986
+
 
 
 
